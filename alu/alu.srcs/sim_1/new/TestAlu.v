@@ -49,6 +49,26 @@ module TestAlu(
                 if (x - y != res) begin
                     $display("alu wrong sub %d at x %d y %d correct %d", res, x, y, x - y);
                 end
+                aluOp = 4'b0100;
+                if (x & y != res) begin
+                    $display("alu wrong and %d at x %d y %d correct %d", res, x, y, x & y);
+                end
+                aluOp = 4'b0101;
+                if ((x | y) != res) begin
+                    $display("alu wrong or %d at x %d y %d correct %d", res, x, y, x | y);
+                end
+                aluOp = 4'b0110;
+                if ((x ^ y) != res) begin
+                    $display("alu wrong xor %d at x %d y %d correct %d", res, x, y, x ^ y);
+                end
+                aluOp = 4'b0111;
+                if (~(x | y) != res) begin
+                    $display("alu wrong nor %d at x %d y %d correct %d", res, x, y, ~(x | y));
+                end
+                aluOp = 4'b1010;
+                if ((x < y ? 1 : 0) != res) begin
+                    $display("alu wrong slt %d at x %d y %d correct %d", res, x, y, (x < y ? 1 : 0));
+                end
 
             end
         end
