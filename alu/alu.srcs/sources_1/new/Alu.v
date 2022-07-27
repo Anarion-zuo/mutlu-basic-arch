@@ -27,22 +27,21 @@ module Alu(
     output wire[31:0] Result
     );
 
-    wire[31:0] addRes, subRes, sltRes, andRes, orRes, xorRes, norRes;
+    wire[31:0] addSubRes, sltRes, andRes, orRes, xorRes, norRes;
 
-    // add
-    AluAdder aluAdder(
-        .A(A), .B(B), .Result(addRes)
+    // add & sub & slt
+    wire[31:0] BInput;
+    Adder commonAdder(
+        .A(A), .B(BInput), .Result(addSubRes)
     );
-
-    // sub
-    AluSubtractor aluSubtractor(
-        .A(A), .B(B), .Result(subRes)
+    wire[31:0] negatedB;
+    AluNegator negator(
+        .B(B), .Result(negatedB)
     );
-
-    // slt
-    wire[31:0] diff;
-    AluSubtractor aluSubtractorSlt(.A(A), .B(B), .Result(diff));
-    assign sltRes = diff[31] == 1'b1 ? 32'b1 : 32'b0;
+    // sub & slt use the subtractor
+    assign BInput = (aluOp[1] == 1 | aluOp[3] == 1) ? negatedB : B;
+    // slt processes a bit more than sub
+    assign sltRes = addSubRes[31] == 1'b1 ? 32'b1 : 32'b0;
 
     // and
     assign andRes = A & B;
@@ -66,7 +65,7 @@ module Alu(
             )
         ) : (
             // arith
-            aluOp[1] == 1 ? subRes : addRes
+            addSubRes
         )
     );
 endmodule
