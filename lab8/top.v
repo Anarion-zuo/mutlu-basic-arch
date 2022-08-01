@@ -90,8 +90,11 @@ clockdiv ClockDiv (
 // Register to save the 28-bit Value
   always @ (posedge CLK, posedge RESET)
     if      (RESET)     DispReg = 28'h0;          // Funny default value 
-	 else if (IOWriteEn)                              // Only when IOWrite 
+	 else if (IOWriteEn)                              // Only when IOWrite
+   begin
 	           DispReg = IOWriteData[27:0];           // only the lower half
+             $display("led %d", DispReg);
+   end
 	 
 
 // Instantiate the processor
